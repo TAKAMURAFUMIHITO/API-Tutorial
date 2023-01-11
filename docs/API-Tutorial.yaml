@@ -1,0 +1,63 @@
+openapi: 3.1.0
+x-stoplight:
+  id: r0vgfq7ljak89
+info:
+  title: API-Tutorial
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /books:
+    get:
+      summary: リソースの取得
+      tags: []
+      responses:
+        '200': null
+      operationId: get-books
+    post:
+      summary: リソースの生成
+      tags: []
+      responses:
+        '200': null
+      operationId: post-books
+    put:
+      summary: リソースの更新
+      tags: []
+      responses:
+        '200': null
+      operationId: put-books
+    patch:
+      summary: リソースの一部更新
+      tags: []
+      responses:
+        '200': null
+      operationId: patch-books
+    delete:
+      summary: リソースの削除
+      tags: []
+      responses:
+        '200': null
+      operationId: delete-books
+components:
+  schemas:
+    Book:
+      title: Book
+      x-stoplight:
+        id: bcaa15eabd95e
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        body:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+          readOnly: true
+        updateDate:
+          type: string
+          format: date-time
+          readOnly: true
