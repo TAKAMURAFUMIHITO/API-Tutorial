@@ -1,63 +1,219 @@
 openapi: 3.1.0
-x-stoplight:
-  id: r0vgfq7ljak89
 info:
   title: API-Tutorial
   version: '1.0'
+  description: API-Tutorial について仕様を説明します。本APIは書籍の扱うサービスに関するAPIであり、これを使用することにより、書籍に対してCRUD処理を行うことができます。
 servers:
   - url: 'http://localhost:3000'
+tags:
+  - name: book
+    description: 書籍に関する事項
 paths:
   /books:
     get:
-      summary: リソースの取得
-      tags: []
+      summary: 本の一覧を取得
+      tags:
+        - book
+      description: 本の一覧を返す
+      operationId: getBooks
+      requestBody:
+        description: 本の一覧を取得する
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
       responses:
-        '200': null
-      operationId: get-books
+        '200':
+          description: 本の一覧を取得
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
     post:
-      summary: リソースの生成
-      tags: []
+      tags:
+        - book
+      summary: 本の追加
+      description: 本の追加
+      operationId: postBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
       responses:
-        '200': null
-      operationId: post-books
+        '200':
+          description: 本が作成された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '405':
+          description: 無効な入力
+  '/books/{bookId}':
     put:
-      summary: リソースの更新
-      tags: []
+      tags:
+        - book
+      summary: 特定の本の情報を更新
+      description: IDによって特定の本を更新する
+      operationId: putBooksBookId
+      parameters:
+        - name: bookId
+          in: path
+          description: 更新する本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: 登録されている本の情報を更新
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
       responses:
-        '200': null
-      operationId: put-books
-    patch:
-      summary: リソースの一部更新
-      tags: []
+        '200':
+          description: 本が更新された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
+        '404':
+          description: 本が存在しない
+        '405':
+          description: 無効な入力
+    get:
+      tags:
+        - book
+      summary: 特定の本の情報を取得
+      description: 特定の本の情報を返す
+      operationId: get-books-bookId
+      parameters:
+        - name: bookId
+          in: path
+          description: 返すための本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
-        '200': null
-      operationId: patch-books
+        '200':
+          description: 本が取得された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
+        '404':
+          description: 本が存在しません
     delete:
-      summary: リソースの削除
-      tags: []
+      tags:
+        - book
+      summary: 特定の本を削除
+      description: 特定の本を削除
+      operationId: deleteBook
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: bookId
+          in: path
+          description: 削除する本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
-        '200': null
-      operationId: delete-books
+        '400':
+          description: リクエストに問題があります
 components:
   schemas:
     Book:
-      title: Book
-      x-stoplight:
-        id: bcaa15eabd95e
+      required:
+        - title
+        - body
       type: object
       properties:
         id:
           type: integer
-          readOnly: true
+          format: int64
+          example: 4
         title:
           type: string
-        body:
-          type: string
+          example: 坊っちゃん
         createDate:
           type: string
           format: date-time
-          readOnly: true
+          example: '2020-01-31T23:59:59+09:00'
         updateDate:
           type: string
           format: date-time
-          readOnly: true
+          example: '2020-01-31T23:59:59+09:00'
+      xml:
+        name: book
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Book:
+      description: 一覧に追加される本
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Book'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Book'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
