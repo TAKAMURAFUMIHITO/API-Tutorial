@@ -1,10 +1,10 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: API-Tutorial
   version: '1.0'
   description: API-Tutorial について仕様を説明します。本APIは書籍の扱うサービスに関するAPIであり、これを使用することにより、書籍に対してCRUD処理を行うことができます。
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:3000/v1'
 tags:
   - name: book
     description: 書籍に関する事項
@@ -16,19 +16,6 @@ paths:
         - book
       description: 本の一覧を返す
       operationId: getBooks
-      requestBody:
-        description: 本の一覧を取得する
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Book'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Book'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Book'
-        required: true
       responses:
         '200':
           description: 本の一覧を取得
@@ -190,18 +177,6 @@ components:
           example: '2020-01-31T23:59:59+09:00'
       xml:
         name: book
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
   requestBodies:
     Book:
       description: 一覧に追加される本
@@ -212,8 +187,3 @@ components:
         application/xml:
           schema:
             $ref: '#/components/schemas/Book'
-  securitySchemes:
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
