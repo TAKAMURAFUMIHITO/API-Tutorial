@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8.0.22
+    platform: linux/amd64
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: tutorial
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+volumes:
+  db-data:
