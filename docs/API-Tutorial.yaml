@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: API-Tutorial
+  version: '1.0'
+  description: API-Tutorial について仕様を説明します。本APIは書籍の扱うサービスに関するAPIであり、これを使用することにより、書籍に対してCRUD処理を行うことができます。
+servers:
+  - url: 'http://localhost:3000/v1'
+tags:
+  - name: book
+    description: 書籍に関する事項
+paths:
+  /books:
+    get:
+      summary: 本の一覧を取得
+      tags:
+        - book
+      description: 本の一覧を返す
+      operationId: getBooks
+      responses:
+        '200':
+          description: 本の一覧を取得
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
+    post:
+      tags:
+        - book
+      summary: 本の追加
+      description: 本の追加
+      operationId: postBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        '200':
+          description: 本が作成された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '405':
+          description: 無効な入力
+  '/books/{bookId}':
+    put:
+      tags:
+        - book
+      summary: 特定の本の情報を更新
+      description: IDによって特定の本を更新する
+      operationId: putBooksBookId
+      parameters:
+        - name: bookId
+          in: path
+          description: 更新する本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: 登録されている本の情報を更新
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: 本が更新された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
+        '404':
+          description: 本が存在しない
+        '405':
+          description: 無効な入力
+    get:
+      tags:
+        - book
+      summary: 特定の本の情報を取得
+      description: 特定の本の情報を返す
+      operationId: get-books-bookId
+      parameters:
+        - name: bookId
+          in: path
+          description: 返すための本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 本が取得された
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: リクエストに問題がある
+        '404':
+          description: 本が存在しません
+    delete:
+      tags:
+        - book
+      summary: 特定の本を削除
+      description: 特定の本を削除
+      operationId: deleteBook
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: bookId
+          in: path
+          description: 削除する本のID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: リクエストに問題があります
+components:
+  schemas:
+    Book:
+      required:
+        - title
+        - body
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 4
+        title:
+          type: string
+          example: 坊っちゃん
+        createDate:
+          type: string
+          format: date-time
+          example: '2020-01-31T23:59:59+09:00'
+        updateDate:
+          type: string
+          format: date-time
+          example: '2020-01-31T23:59:59+09:00'
+      xml:
+        name: book
+  requestBodies:
+    Book:
+      description: 一覧に追加される本
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Book'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Book'
