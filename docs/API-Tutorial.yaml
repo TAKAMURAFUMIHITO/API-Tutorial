@@ -4,7 +4,7 @@ info:
   version: '1.0'
   description: API-Tutorial について仕様を説明します。本APIは書籍の扱うサービスに関するAPIであり、これを使用することにより、書籍に対してCRUD処理を行うことができます。
 servers:
-  - url: 'http://localhost:3000/v1'
+  - url: 'http://localhost:3000'
 tags:
   - name: book
     description: 書籍に関する事項
@@ -23,9 +23,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Book'
         '400':
           description: リクエストに問題がある
     post:
@@ -39,21 +36,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Book'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Book'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Book'
         required: true
       responses:
         '200':
           description: 本が作成された
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Book'
         '400':
@@ -71,18 +59,11 @@ paths:
           description: 更新する本のID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: number
       requestBody:
         description: 登録されている本の情報を更新
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/Book'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Book'
-          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Book'
       responses:
@@ -90,9 +71,6 @@ paths:
           description: 本が更新された
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Book'
         '400':
@@ -111,16 +89,12 @@ paths:
           description: 返すための本のID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: number
       responses:
         '200':
           description: 本が取得された
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Book'
         '400':
@@ -139,8 +113,7 @@ paths:
           description: 削除する本のID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: number
       responses:
         '400':
           description: リクエストに問題がある
@@ -154,8 +127,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: number
           example: 4
           readOnly: true
         title:
@@ -174,15 +146,10 @@ components:
           format: date-time
           example: '2020-01-31T23:59:59+09:00'
           readOnly: true
-      xml:
-        name: book
   requestBodies:
     Book:
       description: 一覧に追加される本
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/Book'
-        application/xml:
           schema:
             $ref: '#/components/schemas/Book'
