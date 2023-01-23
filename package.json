@@ -4,7 +4,8 @@
   "description": "## 仕様 - 登録されている本の一覧を取得できる - idを指定して登録されている本の情報を取得できる - 本を登録できる - 本の情報を更新できる - 登録されている本を削除できる - 本は以下の情報を登録できる - タイトル、要約は更新可能",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
+    "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.11"
   }

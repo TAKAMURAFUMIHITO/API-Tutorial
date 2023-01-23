@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 @Entity('books')
 export class Book{
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id?: number;
 
   @Column()
   title: string;
@@ -12,10 +12,10 @@ export class Book{
   body: string;
 
   @CreateDateColumn()
-  createDate!: string;
+  readonly createDate?: string;
 
   @UpdateDateColumn()
-  updateDate!: string;
+  readonly updateDate?: string;
 
   constructor(title: string, body: string) {
     this.title = title;

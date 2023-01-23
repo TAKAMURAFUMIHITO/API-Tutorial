@@ -1,8 +1,11 @@
 {
   "cSpell.words": [
     "codepaths",
+    "datasource",
     "openapi",
     "tsbuildinfo",
     "typeorm"
-  ]
+  ],
+  "js/ts.implicitProjectConfig.checkJs": false,
+  "js/ts.implicitProjectConfig.experimentalDecorators": true
 }
