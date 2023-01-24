@@ -115,8 +115,12 @@ paths:
           schema:
             type: number
       responses:
+        '204':
+          description: 本を削除しました
         '400':
           description: リクエストに問題がある
+        '404':
+          description: 本が存在しません
 components:
   schemas:
     Book:
