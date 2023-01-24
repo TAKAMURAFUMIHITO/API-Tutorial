@@ -12,7 +12,6 @@ AppDataSource
         console.error("Error during Data Source initialization:", error)
     })
 
-/*
 const app = express();
 app.use(express.json());
 
@@ -34,4 +33,3 @@ app.delete("/books/:id", function (req: Request, res: Response) {
 
 
 app.listen(3000);
-*/

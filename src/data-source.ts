@@ -4,12 +4,12 @@ import { DataSource } from "typeorm";
 const AppDataSource = new DataSource({
   type: "mysql",
   host: "localhost",
-  port: 3306,
+  port: 13306,
   username: "docker",
   password: "docker",
   database: "tutorial",
   synchronize: true,
-  logging: false,
+  logging: true,
   entities: ["src/entity/**/*.ts"],
   // migrations: ["scr/migration/**/*.js"],
 });

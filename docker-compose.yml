@@ -2,10 +2,11 @@ version: "3.8"
 services:
   db:
     image: mysql:8.0.22
+    command: --default-authentication-plugin=mysql_native_password
     platform: linux/amd64
     restart: always
     ports:
-      - 3306:3306
+      - 13306:3306
     volumes:
       - ./db-data:/var/lib/mysql
     environment:
