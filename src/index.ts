@@ -1,16 +1,20 @@
 import express from "express";
 import { Request, Response } from "express";
 import { Book } from "./entity/Book";
+import { User } from "./entity/User";
 import AppDataSource from "./data-source";
 
+/*
 AppDataSource.initialize()
     .then(() => console.log("Data Source has been initialized!"))
     .catch((err) => console.error("Error during Data Source initialization:", err))
+*/
 
 const app = express();
 app.use(express.json());
 
 const bookRepository = AppDataSource.getRepository(Book);
+const userRepository = AppDataSource.getRepository(User);
 
 // GET /books
 app.get("/books", async function (req: Request, res: Response) {
@@ -93,6 +97,32 @@ app.delete("/books/:id", async function (req: Request, res: Response) {
         res.status(400).send(error);
     };
 });
+
+/*
+//  Post /user
+app.post(
+    "/user",
+    body("email").isEmail(),
+    body("password").isLength({ min: 6 }),
+    async function (req: Request, res: Response) {
+        const email = req.body.email;
+        const password = req.body.password;
+        // バリデーションチェック
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const user = await userRepository.findOneBy({
+            email: email,
+        })
+        if (user) {
+            res.status(400).send();
+            return;
+        }
+    },
+);
+*/
 
 app.listen(3000, () => {
     console.log('サーバーが起動しました。ポート番号:3000');
