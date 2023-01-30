@@ -3,12 +3,14 @@ import { Request, Response } from "express";
 import { Book } from "./entity/Book";
 import { User } from "./entity/User";
 import AppDataSource from "./data-source";
+import { body, validationResult } from "express-validator";
+import bcrypt from "bcrypt";
+import JWT from "jsonwebtoken";
+// import auth from "../middleware/checkJWT";
 
-/*
 AppDataSource.initialize()
-    .then(() => console.log("Data Source has been initialized!"))
-    .catch((err) => console.error("Error during Data Source initialization:", err))
-*/
+    .then(() => console.log("データソースの初期化が完了しました！"))
+    .catch((err) => console.error("データベースの初期化中に以下のようなエラーが発生しました:", err))
 
 const app = express();
 app.use(express.json());
@@ -22,7 +24,6 @@ app.get("/books", async function (req: Request, res: Response) {
         const books = await bookRepository.find();
         res.json(books);
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     };
 });
@@ -34,12 +35,15 @@ app.get("/books/:id", async function (req: Request, res: Response) {
             id: Number(req.params.id),
         });
         if (book == null) {
-            res.status(204).send();
+            res.status(404).send([
+                {
+                    message: "その本は存在しません。",
+                }
+            ]);
             return;
         };
         res.send(book);
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     };
 });
@@ -51,7 +55,6 @@ app.post("/books", async function (req: Request, res: Response) {
         await bookRepository.save(book);
         res.send(book);
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     };
 });
@@ -63,7 +66,11 @@ app.put("/books/:id", async function (req: Request, res: Response) {
             id: Number(req.params.id),
         });
         if (book == null) {
-            res.status(404).send();
+            res.status(404).send([
+                {
+                    message: "その本は存在しません。",
+                }
+            ]);
             return;
         };
 
@@ -74,7 +81,6 @@ app.put("/books/:id", async function (req: Request, res: Response) {
         await bookRepository.save(book);
         res.send(book);
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     };
 });
@@ -86,43 +92,103 @@ app.delete("/books/:id", async function (req: Request, res: Response) {
             id: Number(req.params.id),
         });
         if (book == null) {
-            res.status(404).send();
+            res.status(404).send([
+                {
+                    message: "その本は存在しません。",
+                }
+            ]);
             return;
         };
-
         await bookRepository.remove(book);
-        res.sendStatus(404).send();
+        res.send([
+            {
+                message: "削除しました。",
+            }
+        ]);
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     };
 });
 
-/*
-//  Post /user
+//  Post /user/register
 app.post(
-    "/user",
+    "/user/register",
     body("email").isEmail(),
     body("password").isLength({ min: 6 }),
     async function (req: Request, res: Response) {
-        const email = req.body.email;
-        const password = req.body.password;
+        const { username, firstname, lastname, email, password } = req.body;
+
         // バリデーションチェック
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // そのユーザーがすでに存在しているか確認
         const user = await userRepository.findOneBy({
             email: email,
         })
         if (user) {
-            res.status(400).send();
-            return;
+            return res.status(400).send([
+                {
+                    message: "すでにそのユーザーは存在しています。",
+                }
+            ]);
         }
-    },
+
+        // パスワードの暗号化
+        let hashedPassword = await bcrypt.hash(password, 10);
+
+        // DBへ保存
+        await userRepository.save({
+            username,
+            firstname,
+            lastname,
+            email,
+            password: hashedPassword,
+        });
+
+        // クライアントへJWT発行
+        const token = await JWT.sign(
+            { email }, "secret_key", { expiresIn: "1d" }
+        );
+
+        return res.json({
+            token: token,
+        });
+    }
 );
-*/
+
+// Post /user/login
+app.post("/user/login", async function (req: Request, res: Response) {
+    const { email, password } = req.body;
+    const user = await userRepository.findOneBy({
+        email: email,
+    });
+    if (!user) {
+        return res.status(400).send([
+            {
+                message: "そのユーザーは存在しません。",
+            },
+        ]);
+    };
+    // パスワードの復号、照合
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(400).send([
+            {
+                message: "パスワードが異なります。",
+            },
+        ]);
+    };
+
+    const token = await JWT.sign(
+        { email }, "secret_key", { expiresIn: "1d" }
+    );
+    return res.json({
+        token: token,
+    });
+});
 
 app.listen(3000, () => {
     console.log('サーバーが起動しました。ポート番号:3000');
