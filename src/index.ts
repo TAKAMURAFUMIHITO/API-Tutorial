@@ -7,6 +7,9 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
 import checkJWT from "../middleware/checkJWT";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 AppDataSource.initialize()
     .then(() => console.log("データソースの初期化が完了しました！"))
@@ -138,6 +141,7 @@ app.post(
 
         // パスワードの暗号化
         let hashedPassword = await bcrypt.hash(password, 10);
+        console.log(hashedPassword);
 
         // DBへ保存
         await userRepository.save({
@@ -147,14 +151,12 @@ app.post(
             email,
             password: hashedPassword,
         });
-
-        // クライアントへJWT発行
-        const token = JWT.sign(
-            { email }, "secret_key", { expiresIn: "1d" }
-        );
-
-        return res.json({
-            token: token,
+        res.send({
+            username,
+            firstname,
+            lastname,
+            email,
+            password,
         });
     }
 );
@@ -183,7 +185,7 @@ app.post("/user/login", async function (req: Request, res: Response) {
     };
 
     const token = JWT.sign(
-        { email }, "secret_key", { expiresIn: "1d" }
+        { email }, "SECRET_KEY", { expiresIn: "1d" }
     );
     return res.json({
         token: token,
