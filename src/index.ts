@@ -6,7 +6,7 @@ import AppDataSource from "./data-source";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
-// import auth from "../middleware/checkJWT";
+import checkJWT from "../middleware/checkJWT";
 
 AppDataSource.initialize()
     .then(() => console.log("データソースの初期化が完了しました！"))
@@ -19,7 +19,7 @@ const bookRepository = AppDataSource.getRepository(Book);
 const userRepository = AppDataSource.getRepository(User);
 
 // GET /books
-app.get("/books", async function (req: Request, res: Response) {
+app.get("/books", checkJWT, async function (req: Request, res: Response) {
     try {
         const books = await bookRepository.find();
         res.json(books);
@@ -29,7 +29,7 @@ app.get("/books", async function (req: Request, res: Response) {
 });
 
 // GET /books/:id
-app.get("/books/:id", async function (req: Request, res: Response) {
+app.get("/books/:id", checkJWT, async function (req: Request, res: Response) {
     try {
         const book = await bookRepository.findOneBy({
             id: Number(req.params.id),
@@ -49,7 +49,7 @@ app.get("/books/:id", async function (req: Request, res: Response) {
 });
 
 // POST /books
-app.post("/books", async function (req: Request, res: Response) {
+app.post("/books", checkJWT, async function (req: Request, res: Response) {
     try {
         const book = new Book(req.body.title, req.body.body);
         await bookRepository.save(book);
@@ -60,7 +60,7 @@ app.post("/books", async function (req: Request, res: Response) {
 });
 
 // PUT /books/:id
-app.put("/books/:id", async function (req: Request, res: Response) {
+app.put("/books/:id", checkJWT, async function (req: Request, res: Response) {
     try {
         const book = await bookRepository.findOneBy({
             id: Number(req.params.id),
@@ -86,7 +86,7 @@ app.put("/books/:id", async function (req: Request, res: Response) {
 });
 
 // DELETE /books/:id
-app.delete("/books/:id", async function (req: Request, res: Response) {
+app.delete("/books/:id", checkJWT, async function (req: Request, res: Response) {
     try {
         const book = await bookRepository.findOneBy({
             id: Number(req.params.id),
@@ -149,7 +149,7 @@ app.post(
         });
 
         // クライアントへJWT発行
-        const token = await JWT.sign(
+        const token = JWT.sign(
             { email }, "secret_key", { expiresIn: "1d" }
         );
 
@@ -182,7 +182,7 @@ app.post("/user/login", async function (req: Request, res: Response) {
         ]);
     };
 
-    const token = await JWT.sign(
+    const token = JWT.sign(
         { email }, "secret_key", { expiresIn: "1d" }
     );
     return res.json({
