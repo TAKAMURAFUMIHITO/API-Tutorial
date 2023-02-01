@@ -54,7 +54,7 @@ app.get("/books/:id", checkJWT, async function (req: Request, res: Response) {
 // POST /books
 app.post("/books", checkJWT, async function (req: Request, res: Response) {
     try {
-        const book = new Book(req.body.title, req.body.body);
+        const book = new Book(req.body.title, req.body.body, req.body.userId);
         await bookRepository.save(book);
         res.send(book);
     } catch (error) {
@@ -190,6 +190,69 @@ app.post("/user/login", async function (req: Request, res: Response) {
     return res.json({
         token: token,
     });
+});
+
+// Put /user/:id
+app.put("/user/:id", checkJWT, async function (req: Request, res: Response) {
+    try {
+        const user = await userRepository.findOneBy({
+            id: Number(req.params.id),
+        });
+        if (user == null) {
+            res.status(404).send([
+                {
+                    message: "そのユーザーは存在しません。",
+                }
+            ]);
+            return;
+        };
+
+        // 一部更新も可能にする
+        user.username = req.body.username || user.username;
+        user.firstname = req.body.firstname || user.firstname;
+        user.lastname = req.body.lastname || user.lastname;
+        user.email = req.body.email || user.email;
+        // パスワード
+        if (req.body.password.length >= 6) {
+            let hashedPassword = await bcrypt.hash(req.body.password, 10);
+            user.password = hashedPassword || user.password;
+        } else {
+            return res.status(400).send([
+                {
+                    message: "パスワードは6文字以上入力してください。",
+                },
+            ]);
+        }
+        await userRepository.save(user);
+        res.send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    };
+})
+
+// Delete /user/:id
+app.delete("/user/:id", checkJWT, async function (req: Request, res: Response) {
+    try {
+        const user = await userRepository.findOneBy({
+            id: Number(req.params.id),
+        });
+        if (user == null) {
+            res.status(404).send([
+                {
+                    message: "そのユーザーは存在しません。",
+                }
+            ]);
+            return;
+        };
+        await userRepository.remove(user);
+        res.send([
+            {
+                message: "削除しました。",
+            }
+        ]);
+    } catch (error) {
+        res.status(400).send(error);
+    };
 });
 
 app.listen(3000, () => {

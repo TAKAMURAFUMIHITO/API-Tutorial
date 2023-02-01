@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Book } from "./Book";
 
 @Entity('users')
@@ -27,13 +27,8 @@ export class User{
   @UpdateDateColumn()
   readonly updateDate?: string;
 
-  @OneToMany(() => Book, (book) => book.user, {
-    createForeignKeyConstraints: false,
-    persistence: false,
-  })
-
-  @JoinColumn()
-  books?: Book;
+  @OneToMany(() => Book, (book) => book.user)
+  books?: Book[];
 
   constructor(username: string, firstname: string, lastname: string, email: string, password: string) {
     this.username = username;
