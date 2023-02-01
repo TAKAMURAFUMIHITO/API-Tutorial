@@ -10,9 +10,9 @@ services:
     volumes:
       - ./db-data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: tutorial
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: docker
+      MYSQL_DATABASE: process.env.MYSQL_DATABASE
+      MYSQL_ROOT_PASSWORD: process.env.MYSQL_ROOT_PASSWORD
+      MYSQL_USER: process.env.MYSQL_USER
+      MYSQL_PASSWORD: process.env.MYSQL_PASSWORD
 volumes:
   db-data:

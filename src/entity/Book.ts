@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { User } from "./User";
 
 @Entity('books')
 export class Book{
@@ -17,8 +19,15 @@ export class Book{
   @UpdateDateColumn()
   readonly updateDate?: string;
 
-  constructor(title: string, body: string) {
+  @Column()
+  userId: number;
+
+  @ManyToOne(() => User, (user) => user.books)
+  user?: User;
+
+  constructor(title: string, body: string, userId: number) {
     this.title = title;
     this.body = body;
+    this.userId = userId;
   }
 }
