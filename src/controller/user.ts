@@ -1,10 +1,10 @@
-import AppDataSource from "../data-source";
+import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
 import { User } from "../model/User";
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
-import config from "./config";
+import config from "../config";
 
 const userRepository = AppDataSource.getRepository(User);
 

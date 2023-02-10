@@ -1,21 +1,27 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
+import { SeederOptions } from "typeorm-extension";
 import { Book } from "./model/Book"
 import { User } from "./model/User"
-import * as dotenv from 'dotenv';
-dotenv.config();
+import config from "./config"
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "mysql",
-  host: process.env.HOST,
-  port: Number(process.env.PORT),
-  username: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: config.connection.host,
+  port: Number(config.connection.port),
+  username: config.connection.username,
+  password: config.connection.password,
+  database: config.connection.database,
   synchronize: true,
   logging: true,
   entities: [Book, User],
   migrations: ["scr/migration/*.ts"],
 });
 
-export default AppDataSource;
+export const options: DataSourceOptions & SeederOptions = {
+  type: "better-sqlite3",
+  database: "db.sqlite",
+  entities: [Book],
+  seeds: ['./src/database/seeds/**/*.seeder.ts'],
+  factories: ['./src/database/factories/**/*.factory.ts']
+};

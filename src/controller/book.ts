@@ -1,4 +1,4 @@
-import AppDataSource from "../data-source";
+import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
 import { Book } from "../model/Book";
 
@@ -10,6 +10,7 @@ export async function getBooks(req: Request, res: Response) {
     const books = await bookRepository.find();
     res.json(books);
   } catch (error) {
+    console.log(error)
     res.status(400).send(error);
   };
 };
