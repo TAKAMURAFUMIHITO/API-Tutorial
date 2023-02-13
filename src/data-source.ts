@@ -18,10 +18,12 @@ export const AppDataSource = new DataSource({
   migrations: ["scr/migration/*.ts"],
 });
 
+/*
 export const options: DataSourceOptions & SeederOptions = {
   type: "better-sqlite3",
   database: "db.sqlite",
-  entities: [Book],
-  seeds: ['./src/database/seeds/**/*.seeder.ts'],
-  factories: ['./src/database/factories/**/*.factory.ts']
+  entities: [Book, User],
+  seeds: ['./src/database/seeds/*.seeder.ts'],
+  factories: ['./src/database/factories/*.factory.ts']
 };
+*/

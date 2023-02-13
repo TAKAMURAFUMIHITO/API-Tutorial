@@ -1,38 +1,41 @@
 // import request from "supertest";
 // import { app } from "./index";
-import { getBooks, getBook, postBook, putBook, deleteBook } from "./controller/book";
-import { Request, Response } from "express";
 // import { registerUser, loginUser, putUser, deleteUser } from "./controller/user";
+// import { options } from "./data-source";
 
+import { getBooks } from "./controller/book";
+import { Request, Response } from "express";
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { runSeeders, dropDatabase, SeederOptions } from 'typeorm-extension';
-import { options } from "./data-source";
-// import { Book } from "./model/Book"
-// import BookSeeder from "./database/seeds/book.seeder";
-// import BookFactory from "./database/factories/book.factory";
-
+import { runSeeders, createDatabase, dropDatabase, SeederOptions } from 'typeorm-extension';
+import { Book } from "./model/Book";
+import { User } from "./model/User";
+import BookSeeder from "./database/seeds/book.seeder";
+import BookFactory from "./database/factories/book.factory";
 describe("テスト", () => {
-  /*
   const options: DataSourceOptions & SeederOptions = {
     type: "better-sqlite3",
     database: "db.sqlite",
-    entities: [Book],
+    entities: [Book, User],
     seeds: [BookSeeder],
-    factories: [BookFactory],
+    factories: [BookFactory]
   };
-  */
-
+  
   beforeEach(async () => {
+    await createDatabase({
+      options
+    });
     const dataSource = new DataSource(options);
     await dataSource.initialize();
     await runSeeders(dataSource);
   });
 
+  /*
   afterEach(async () => {
     await dropDatabase({
       options
     });
   });
+  */
 
   test("本を全件取得", async () => {
     const req = {} as Request;
@@ -44,7 +47,7 @@ describe("テスト", () => {
     expect(res.json).toBeCalledWith([{
       title: expect.any(String),
       body: expect.any(String),
-      userId: expect.any(String),
+      userId: expect.any(Number),
     }]);
   });
 /*
