@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "./User";
 
 @Entity('books')
@@ -22,7 +22,10 @@ export class Book{
   @Column()
   userId: number;
 
-  @ManyToOne(() => User, (user) => user.books)
+  @ManyToOne(() => User, (user) => user.books, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({name: "userId"})
   user?: User;
 
   constructor(title: string, body: string, userId: number) {

@@ -1,21 +1,18 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
-import { Book } from "./entity/Book"
-import { User } from "./entity/User"
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { DataSource, DataSourceOptions } from "typeorm";
+import { SeederOptions } from "typeorm-extension";
+import { Book } from "./model/Book"
+import { User } from "./model/User"
+import config from "./config"
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "localhost",
-  port: 13306,
-  username: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: config.connection.host,
+  port: Number(config.connection.port),
+  username: config.connection.username,
+  password: config.connection.password,
+  database: config.connection.database,
   synchronize: true,
   logging: true,
   entities: [Book, User],
-  migrations: ["scr/migration/*.ts"],
 });
-
-export default AppDataSource;
