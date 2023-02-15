@@ -1,55 +1,57 @@
-// import request from "supertest";
-// import { app } from "./index";
-// import { registerUser, loginUser, putUser, deleteUser } from "./controller/user";
-// import { options } from "./data-source";
-
-import { getBooks } from "./controller/book";
-import { Request, Response } from "express";
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, createDatabase, dropDatabase, SeederOptions } from 'typeorm-extension';
 import { Book } from "./model/Book";
 import { User } from "./model/User";
 import BookSeeder from "./database/seeds/book.seeder";
-import BookFactory from "./database/factories/book.factory";
+
 describe("テスト", () => {
-  const options: DataSourceOptions & SeederOptions = {
+  const testDataSourceOptions: DataSourceOptions & SeederOptions = {
     type: "better-sqlite3",
     database: "db.sqlite",
     entities: [Book, User],
     seeds: [BookSeeder],
-    factories: [BookFactory]
   };
-  
+
+  const TestDataSource = new DataSource(
+    testDataSourceOptions
+  );
+
   beforeEach(async () => {
     await createDatabase({
-      options
+      options: testDataSourceOptions
     });
-    const dataSource = new DataSource(options);
-    await dataSource.initialize();
-    await runSeeders(dataSource);
+
+    await TestDataSource.initialize();
+    await runSeeders(TestDataSource);
   });
 
-  /*
   afterEach(async () => {
     await dropDatabase({
-      options
+      options:testDataSourceOptions
     });
   });
-  */
 
   test("本を全件取得", async () => {
-    const req = {} as Request;
-    const res = {
-      json: jest.fn(),
-      status: jest.fn()
-    } as any as Response;
-    await getBooks(req, res);
-    expect(res.json).toBeCalledWith([{
-      title: expect.any(String),
-      body: expect.any(String),
-      userId: expect.any(Number),
-    }]);
+    const bookRepository = TestDataSource.getRepository(Book);
+
+    const books = await bookRepository.find({
+      where: {id: 1},
+    });
+
+    // booksの長さが1であることを確認
+    // expect(books.length).toBe(1);
+
+    const expectedBook: Partial<Book> = {
+      id: 1,
+      title: "奥の細道",
+      body: "月日は百代の過客にして、行かふ年も又旅人也。",
+    }
+
+    expect(books).toContainEqual(
+      expect.objectContaining(expectedBook)
+    );
   });
+
 /*
   test("特定の本を取得", () => {
     expect(getBook).toBe();
