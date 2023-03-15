@@ -1,39 +1,29 @@
-import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
-import { Book } from "../model/Book";
+import BookRepository from "../repository/books";
 
-const bookRepository = AppDataSource.getRepository(Book);
+const bookRepository = new BookRepository();
 
 // 本を全件取得
 export async function getBooks(req: Request, res: Response) {
   try {
-    const books = await bookRepository.find();
+    const books = await bookRepository.findAll();
     res.json(books);
   } catch (error) {
-    console.log(error)
     res.status(400).send(error);
-  };
-};
+  }
+}
 
 // 特定の本を取得
 export async function getBook(req: Request, res: Response) {
   try {
-    const book = await bookRepository.findOneBy({
-      id: Number(req.params.id),
-    });
-    if (book == null) {
-        res.status(404).send([
-          {
-            message: "その本は存在しません。",
-          }
-        ]);
-      return;
-    };
+    const bookId = req.params.id as unknown as number;
+    const book = await bookRepository.find(bookId);
     res.send(book);
   } catch (error) {
     res.status(400).send(error);
-  };
+  }
 }
+/*
 
 // 本を投稿
 export async function postBook(req: Request, res: Response) {
@@ -49,6 +39,7 @@ export async function postBook(req: Request, res: Response) {
 // 特定の本を更新
 export async function putBook(req: Request, res: Response) {
   try {
+    const bookRequest = req.body;
     const book = await bookRepository.findOneBy({
       id: Number(req.params.id),
     });
@@ -96,3 +87,4 @@ export async function deleteBook(req: Request, res: Response) {
     res.status(400).send(error);
   };
 };
+*/
