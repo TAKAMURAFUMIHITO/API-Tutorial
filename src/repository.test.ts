@@ -33,6 +33,7 @@ describe("リポジトリテスト", () => {
       options: testDataSourceOptions,
     });
   });
+
   const bookRepository = TestDataSource.getRepository(Book);
   test("本を全件取得", async () => {
     const books = await bookRepository.find();

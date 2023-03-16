@@ -6,7 +6,7 @@ import {
   postBook,
   putBook,
   deleteBook,
-} from "../controller/book";
+} from "../controller/bookController";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import BookRepository from "../repository/books";
+import BookRepository from "../repository/bookRepository";
 import { Book } from "../model/Book";
 
 const bookRepository = new BookRepository();
