@@ -1,6 +1,12 @@
 import express from "express";
 import checkJWT from "../../middleware/checkJWT";
-import { getBooks, getBook } from "../controller/book";
+import {
+  getBooks,
+  getBook,
+  postBook,
+  putBook,
+  deleteBook,
+} from "../controller/book";
 
 const router = express.Router();
 
@@ -9,14 +15,14 @@ router.get("/", checkJWT, getBooks);
 
 // GET /books/:id
 router.get("/:id", checkJWT, getBook);
-/*
-// POST /books
-router.post("/", checkJWT, postBook);
 
-// PUT /books/:id
-router.put("/:id", checkJWT, putBook);
+// POST /books/:userId
+router.post("/:userId", checkJWT, postBook);
+
+// PUT /books/:userId/:id
+router.put("/:userId/:id", checkJWT, putBook);
 
 // DELETE /books/:id
-router.delete("/:id", checkJWT, deleteBook);
-*/
+router.delete("/:userId/:id", checkJWT, deleteBook);
+
 export default router;

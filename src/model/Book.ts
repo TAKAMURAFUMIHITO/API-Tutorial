@@ -1,9 +1,16 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./User";
 
-@Entity('books')
-export class Book{
+@Entity("books")
+export class Book {
   @PrimaryGeneratedColumn()
   readonly id?: number;
 
@@ -20,17 +27,16 @@ export class Book{
   readonly updateDate?: string;
 
   @Column()
-  userId: number;
+  userId?: number;
 
   @ManyToOne(() => User, (user) => user.books, {
     createForeignKeyConstraints: false,
   })
-  @JoinColumn({name: "userId"})
+  @JoinColumn({ name: "userId" })
   user?: User;
 
-  constructor(title: string, body: string, userId: number) {
+  constructor(title: string, body: string) {
     this.title = title;
     this.body = body;
-    this.userId = userId;
   }
 }
