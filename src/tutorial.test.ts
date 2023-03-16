@@ -1,10 +1,15 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { runSeeders, createDatabase, dropDatabase, SeederOptions } from 'typeorm-extension';
+import { DataSource, DataSourceOptions } from "typeorm";
+import {
+  runSeeders,
+  createDatabase,
+  dropDatabase,
+  SeederOptions,
+} from "typeorm-extension";
 import { Book } from "./model/Book";
 import { User } from "./model/User";
-import BookSeeder from "./database/seeds/book.seeder";
+import BookSeeder from "./seeds/book.seeder";
 
-describe("テスト", () => {
+describe("リポジトリテスト", () => {
   const testDataSourceOptions: DataSourceOptions & SeederOptions = {
     type: "better-sqlite3",
     database: "db.sqlite",
@@ -12,63 +17,72 @@ describe("テスト", () => {
     seeds: [BookSeeder],
   };
 
-  const TestDataSource = new DataSource(
-    testDataSourceOptions
-  );
+  const TestDataSource = new DataSource(testDataSourceOptions);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await createDatabase({
-      options: testDataSourceOptions
+      options: testDataSourceOptions,
     });
 
     await TestDataSource.initialize();
     await runSeeders(TestDataSource);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await dropDatabase({
-      options:testDataSourceOptions
+      options: testDataSourceOptions,
     });
   });
-
+  const bookRepository = TestDataSource.getRepository(Book);
   test("本を全件取得", async () => {
-    const bookRepository = TestDataSource.getRepository(Book);
+    const books = await bookRepository.find();
+    expect(books.length).toBe(2);
+  });
 
-    const books = await bookRepository.find({
-      where: {id: 1},
+  test("特定の本を取得", async () => {
+    const book = await bookRepository.find({
+      where: { id: 1 },
     });
-
-    // booksの長さが1であることを確認
-    // expect(books.length).toBe(1);
-
     const expectedBook: Partial<Book> = {
       id: 1,
       title: "奥の細道",
       body: "月日は百代の過客にして、行かふ年も又旅人也。",
-    }
-
-    expect(books).toContainEqual(
-      expect.objectContaining(expectedBook)
-    );
+    };
+    expect(book).toContainEqual(expect.objectContaining(expectedBook));
   });
 
-/*
-  test("特定の本を取得", () => {
-    expect(getBook).toBe();
+  test("本を投稿", async () => {
+    await bookRepository.insert({
+      title: "源氏物語",
+      body: "清少納言ではなく、紫式部の作品です。",
+      userId: 1,
+    });
+    const books = await bookRepository.find();
+    expect(books.length).toBe(3);
   });
 
-  test("本を投稿", () => {
-    expect(postBook).toBe();
+  test("特定の本を更新", async () => {
+    await bookRepository.update(3, {
+      title: "枕草子",
+      body: "これが清少納言の作品です。",
+    });
+    const book = await bookRepository.find({
+      where: { id: 3 },
+    });
+    const expectedBook: Partial<Book> = {
+      id: 3,
+      title: "枕草子",
+      body: "これが清少納言の作品です。",
+    };
+    expect(book).toContainEqual(expect.objectContaining(expectedBook));
   });
 
-  test("特定の本を更新", () => {
-    expect(putBook).toBe();
+  test("特定の本を削除", async () => {
+    await bookRepository.delete(3);
+    const books = await bookRepository.find();
+    expect(books.length).toBe(2);
   });
-
-  test("特定の本を削除", () => {
-    expect(deleteBook).toBe();
-  });
-
+  /*
   test("会員登録", () => {
     async () => {
       const response = await request(registerUser).post("/user/resister");

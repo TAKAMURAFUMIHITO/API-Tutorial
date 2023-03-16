@@ -15,7 +15,7 @@ export async function registerUser(req: Request, res: Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
-  };
+  }
 
   // そのユーザーがすでに存在しているか確認
   const user = await userRepository.findOneBy({
@@ -27,7 +27,7 @@ export async function registerUser(req: Request, res: Response) {
         message: "すでにそのユーザーは存在しています。",
       },
     ]);
-  };
+  }
 
   // パスワードの暗号化
   let hashedPassword = await bcrypt.hash(password, 10);
@@ -48,7 +48,7 @@ export async function registerUser(req: Request, res: Response) {
     email,
     password,
   });
-};
+}
 
 // ユーザーログイン
 export async function loginUser(req: Request, res: Response) {
@@ -62,7 +62,7 @@ export async function loginUser(req: Request, res: Response) {
         message: "そのユーザーは存在しません。",
       },
     ]);
-  };
+  }
 
   // パスワードの復号、照合
   const isMatch = await bcrypt.compare(password, user.password);
@@ -72,15 +72,13 @@ export async function loginUser(req: Request, res: Response) {
         message: "パスワードが異なります。",
       },
     ]);
-  };
+  }
 
-  const token = JWT.sign(
-    { email }, config.jwt.secret, config.jwt.options
-  );
+  const token = JWT.sign({ email }, config.jwt.secret, config.jwt.options);
   return res.json({
     token: token,
   });
-};
+}
 
 // ユーザー情報更新
 export async function putUser(req: Request, res: Response) {
@@ -95,7 +93,7 @@ export async function putUser(req: Request, res: Response) {
         },
       ]);
       return;
-    };
+    }
 
     // 一部更新も可能にする
     user.username = req.body.username || user.username;
@@ -112,13 +110,13 @@ export async function putUser(req: Request, res: Response) {
           message: "パスワードは6文字以上入力してください。",
         },
       ]);
-    };
+    }
     await userRepository.save(user);
     res.send(user);
   } catch (error) {
     res.status(400).send(error);
-  };
-};
+  }
+}
 
 // ユーザー削除
 export async function deleteUser(req: Request, res: Response) {
@@ -133,7 +131,7 @@ export async function deleteUser(req: Request, res: Response) {
         },
       ]);
       return;
-    };
+    }
     await userRepository.remove(user);
     res.send([
       {
@@ -142,5 +140,5 @@ export async function deleteUser(req: Request, res: Response) {
     ]);
   } catch (error) {
     res.status(400).send(error);
-  };
-};
+  }
+}
