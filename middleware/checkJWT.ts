@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import JWT from "jsonwebtoken";
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
 
 const checkJWT = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
     res.status(400).json([
@@ -14,7 +14,6 @@ const checkJWT = async (req: Request, res: Response, next: NextFunction) => {
     ]);
   } else {
     try {
-      console.log(token);
       JWT.verify(token, "SECRET_KEY");
       next();
     } catch (e) {

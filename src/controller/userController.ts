@@ -65,7 +65,7 @@ export async function loginUser(req: Request, res: Response) {
   });
 }
 
-// ユーザー情報更新(パスワード必要)
+// ユーザー情報更新
 export async function putUser(req: Request, res: Response) {
   try {
     const user = await userRepository.findById(parseInt(req.params.id));
@@ -84,16 +84,20 @@ export async function putUser(req: Request, res: Response) {
     user.email = req.body.email || user.email;
 
     // パスワード暗号化
-    if (req.body.password.length >= 6) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      user.password = hashedPassword || user.password;
-    } else {
-      return res.status(400).send([
-        {
-          message: "パスワードは6文字以上入力してください。",
-        },
-      ]);
+    if (req.body.password != undefined) {
+      if (req.body.password.length >= 6) {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        user.password = hashedPassword;
+      } else {
+        return res.status(400).send([
+          {
+            message: "パスワードは6文字以上入力してください。",
+          },
+        ]);
+      }
+      user.password = user.password;
     }
+
     await userRepository.update(user);
     res.send(user);
   } catch (error) {
