@@ -17,8 +17,14 @@ export async function getBooks(req: Request, res: Response) {
 // 特定の本を取得
 export async function getBook(req: Request, res: Response) {
   try {
-    const bookId = parseInt(req.params.id);
-    const book = await bookRepository.find(bookId);
+    const book = await bookRepository.find(parseInt(req.params.id));
+    if (book == null) {
+      return res.status(404).send([
+        {
+          message: "その本は存在しません。",
+        },
+      ]);
+    }
     res.send(book);
   } catch (error) {
     res.status(400).send(error);
@@ -40,8 +46,7 @@ export async function postBook(req: Request, res: Response) {
 // 特定の本を更新
 export async function putBook(req: Request, res: Response) {
   try {
-    const bookId = parseInt(req.params.id);
-    const book = await bookRepository.find(bookId);
+    const book = await bookRepository.find(parseInt(req.params.id));
     if (book == null) {
       res.status(404).send([
         {
@@ -68,14 +73,13 @@ export async function deleteBook(req: Request, res: Response) {
     const bookId = parseInt(req.params.id);
     const book = await bookRepository.find(bookId);
     if (book == null) {
-      res.status(404).send([
+      return res.status(404).send([
         {
           message: "その本は存在しません。",
         },
       ]);
-      return;
     }
-    await bookRepository.delete(book);
+    await bookRepository.delete(bookId);
     res.send([
       {
         message: "削除しました。",

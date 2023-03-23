@@ -17,7 +17,6 @@ const checkJWT = async (req: Request, res: Response, next: NextFunction) => {
       JWT.verify(token, "SECRET_KEY");
       next();
     } catch (e) {
-      console.log(e);
       return res.status(400).json([
         {
           message: "tokenが一致しません。",

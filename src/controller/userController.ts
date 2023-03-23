@@ -105,19 +105,19 @@ export async function putUser(req: Request, res: Response) {
   }
 }
 
-// ユーザー削除
+// 特定のユーザーを削除
 export async function deleteUser(req: Request, res: Response) {
   try {
-    const user = await userRepository.findById(parseInt(req.params.id));
+    const userId = parseInt(req.params.id);
+    const user = await userRepository.findById(userId);
     if (user == null) {
-      res.status(404).send([
+      return res.status(404).send([
         {
           message: "そのユーザーは存在しません。",
         },
       ]);
-      return;
     }
-    await userRepository.delete(user);
+    await userRepository.delete(userId);
     res.send([
       {
         message: "削除しました。",

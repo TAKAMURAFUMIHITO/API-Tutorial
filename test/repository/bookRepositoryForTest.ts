@@ -1,7 +1,7 @@
-import { AppDataSource } from "../data-source";
-import { Book } from "../model/Book";
+import { TestDataSource } from "../../src/data-source";
+import { Book } from "../../src/model/Book";
 
-const bookRepository = AppDataSource.getRepository(Book);
+const bookRepository = TestDataSource.getRepository(Book);
 
 export default class BookRepository {
   // 本を全件取得

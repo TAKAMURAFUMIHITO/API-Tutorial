@@ -1,7 +1,7 @@
-import { AppDataSource } from "../data-source";
-import { User } from "../model/User";
+import { TestDataSource } from "../../src/data-source";
+import { User } from "../../src/model/User";
 
-const userRepository = AppDataSource.getRepository(User);
+const userRepository = TestDataSource.getRepository(User);
 
 export default class BookRepository {
   // すでに登録されているメールアドレスか確認
